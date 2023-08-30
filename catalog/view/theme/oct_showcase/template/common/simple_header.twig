@@ -1,0 +1,24 @@
+{{ header }}
+<div class="container">
+
+<nav aria-label="breadcrumb">
+	<ul class="breadcrumb sc-breadcrumb fsz-12">
+      {% for breadcrumb in breadcrumbs %}<li class="breadcrumb-item sc-breadcrumb-item"><a href="{{ breadcrumb.href }}" aria-label="Breadcrumb">{{ breadcrumb.text }}</a></li>{% endfor %}
+  </ul>
+</nav>
+
+  {% if error_warning %}
+  <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}</div>
+  {% endif %}
+  <div class="row">{{ column_left }}
+    {% if column_left and column_right %}
+    {% set class = 'col-sm-6' %}
+    {% elseif column_left or column_right %}
+    {% set class = 'col-sm-9' %}
+    {% else %}
+    {% set class = 'col-sm-12' %}
+    {% endif %}
+    <div id="content" class="{{ class }}">{{ content_top }}
+      <h1 class="col-12 sc-page-title pb-3">{{ heading_title }}</h1>
+      
+      

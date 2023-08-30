@@ -1,0 +1,8 @@
+admin/config.php
+config.php
+storage/cache
+storage/modification
+storage/logs
+image/cache
+min/*
+.idea/*

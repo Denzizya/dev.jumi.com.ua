@@ -1,0 +1,49 @@
+<div class="simplecheckout-block oct-checkout-block" id="simplecheckout_cart" {{ hide ? 'data-hide="true"' : '' }} {{ has_error ? 'data-error="true"' : '' }}>
+
+    {% if attention %}
+    <div class="alert alert-danger simplecheckout-warning-block">{{ attention }}</div>
+{% endif %}
+{% if error_warning %}
+    <div class="alert alert-danger simplecheckout-warning-block">{{ error_warning }}</div>
+{% endif %}
+
+    {% for product in products %}
+    <div class="oct-checkout-block oct-checkout-cart d-flex flex-column flex-md-row justify-content-between p-3">
+        <div class="oct-checkout-cart-product-info d-flex align-items-md-center">
+            {% if product['thumb'] %}
+            <a href="{{ product.href }}"><img src="{{ product.thumb }}" alt="{{ product.name }}" title="{{ product.name }}" width="60" height="60"></a>
+            {% endif %}
+            <div class="ps-3">
+                <a href="{{ product.href }}" class="blue-link d-block mb-2">{{ product.name }}</a>
+
+                <div class="oct-checkout-cart-product-option">
+                    {% for option in product['option'] %}{{ option['name'] }}: <span class="light-text">{{ option['value'] }}</span>{% endfor %}
+                </div>
+                {% if product['reward'] %}
+                <br>
+                <small>{{ product['reward'] }}</small>
+                {% endif %}
+            </div>
+        </div>
+        <div class="oct-checkout-cart-actions">
+            <div class="oct-checkout-cart-buttons d-flex align-items-stretch justify-content-end">
+                <div class="oct-checkout-cart-quantity d-flex align-items-center justify-content-center">
+                    <input name="product_id_q" value="30" style="display: none;" type="hidden">
+                    <input name="product_id" value="6" style="display: none;" type="hidden">
+                    <div class="quantity">
+                        <input class="form-control" id="quantity-1" type="text" data-onchange="changeProductQuantity" {{ quantity_step_as_minimum ? 'data-minimum="' ~ product['minimum'] ~ '"' : '' }} name="quantity[{{ product['cart_id'] is not empty ? product['cart_id'] : product['key'] }}]" value="{{ product['quantity'] }}" size="1" />
+                    </div>
+                </div>
+                <button type="button" class="oct-checkout-cart-delete-btn d-flex align-items-center justify-content-center" data-onclick="removeProduct" data-product-key="{{ product['cart_id'] is not empty ? product['cart_id'] : product['key'] }}">
+                    <span class="oct-checkout-cart-delete-btn-icon"></span>
+                </button>
+            </div>
+            <div class="oct-checkout-cart-total">{{ column_total }} {{ product['total'] }}</div>
+            <div class="oct-checkout-cart-price">{{ column_price }} {{ product['price'] }}</div>
+        </div>
+    </div>
+    {% endfor %}
+
+
+    <input type="hidden" name="remove" value="" id="simplecheckout_remove">
+</div>

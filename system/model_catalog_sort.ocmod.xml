@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+    <name>Model Catalog Sort</name>
+	<code>Model Catalog Sort</code>
+    <version>1.0.0</version>
+    <author>opencartfaq</author>
+    <link>https://opencartfaq.com</link>
+
+    <file path="catalog/model/catalog/product.php" error="skip">
+        <operation error="log">
+			<search ><![CDATA[$sql .= " ORDER BY]]></search>
+			<add position="replace"><![CDATA[$sql .= " ORDER BY (p.price>0) DESC,]]></add>
+		</operation>
+		<operation error="log">
+			<search ><![CDATA[if (!empty($data['filter_name']) && !empty($data['filter_tag'])) {]]></search>
+			<add position="before"><![CDATA[
+			if (!empty($data['filter_model_ns']) && !empty($data['filter_name'])) {
+				$sql .= " OR p.model LIKE '%" . $this->db->escape($data['filter_name']) . "%'";
+			}
+			]]></add>
+		</operation>
+    </file>
+
+    <file path="catalog/controller/product/category.php" error="skip">
+        <operation error="log">
+			<search ><![CDATA[$price = $this->currency->format($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);]]></search>
+			<add position="replace"><![CDATA[
+            $price = $this->currency->format($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+            if ($result['price'] == 0) {
+                $price = $this->language->get('text_zero_price');
+            }
+            ]]></add>
+		</operation>
+    </file>
+
+    <file path="catalog/language/uk-ua/uk-ua.php" error="skip">
+        <operation error="log">
+			<search ><![CDATA[$_['text_home']]]></search>
+			<add position="before"><![CDATA[
+            $_['text_zero_price'] = 'Уточніть ціну';
+            ]]></add>
+		</operation>
+    </file>
+
+    <file path="catalog/language/ru-ru/ru-ru.php" error="skip">
+        <operation error="log">
+			<search ><![CDATA[$_['text_home']]]></search>
+			<add position="before"><![CDATA[
+            $_['text_zero_price'] = 'Уточните цену';
+            ]]></add>
+		</operation>
+    </file>
+
+    <file path="catalog/controller/product/product.php" error="skip">
+        <operation error="log">
+			<search ><![CDATA[$data['products'] = array();]]></search>
+			<add position="before"><![CDATA[
+            $data['prices'] = [];
+            $prices_data = $this->model_catalog_product->getProductSpecialsDataById($product_id);
+
+            foreach ($prices_data as $item) {
+                $data['prices'][] = [
+                    'customer_group_id' => $item['customer_group_id'],
+                    'price' => $this->currency->format($this->tax->calculate($item['price'], $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']),
+                ];
+            }
+
+            //var_dump($prices_data);
+            ]]></add>
+		</operation>
+    </file>
+
+    <file path="catalog/view/theme/oct_showcase/template/product/product.twig" error="skip">
+        <operation error="log">
+			<search ><![CDATA[<div class="prices-block"></div>]]></search>
+			<add position="replace"><![CDATA[
+            {% if prices %}
+            <div class="prices-block">
+            {% for price_item in prices %}
+
+            <div class="item">
+            {{ price_item.customer_group_id }}: {{ price_item.price }}
+            </div>
+
+            {% endfor %}
+            </div>
+            {% endif %}
+            ]]></add>
+		</operation>
+    </file>
+
+    
+
+</modification>
+

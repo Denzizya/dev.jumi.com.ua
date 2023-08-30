@@ -1,0 +1,410 @@
+<modification>
+	<name>MicrodataPro 8.1</name>
+	<code>MicrodataPro</code>
+	<version>8.1</version>
+	<author>https://microdata.pro</author>
+	<link><![CDATA[https://microdata.pro]]></link>
+
+	<!--open graph & twitter cards-->
+		<file path="system/library/document.php">
+			<operation>
+				<search><![CDATA[public function setTitle]]></search>
+				<add position="before"><![CDATA[
+					//microdatapro 8.1 start
+					private $tc_og;
+					private $tc_og_prefix;
+					public function setTc_og($data){$this->tc_og = $data;}
+					public function getTc_og(){return $this->tc_og;}
+					public function setTc_og_prefix($data){$this->tc_og_prefix = $data;}
+					public function getTc_og_prefix(){return $this->tc_og_prefix;}
+					//microdatapro 8.1 end
+				]]></add>
+			</operation>
+		</file>
+		<file path="catalog/controller/common/header.php">
+			<operation error="skip">
+				<search><![CDATA[$data['search']]]></search>
+				<add position="before"><![CDATA[
+					//microdatapro 8.1 start - 1 - main
+					$data['tc_og'] = $this->document->getTc_og();
+					$data['tc_og_prefix'] = $this->document->getTc_og_prefix();
+					$microdatapro_main_flag = 1;
+					//microdatapro 8.1 end - 1 - main
+					]]></add>
+			</operation>
+			<operation>
+				<search><![CDATA[$data['cart']]]></search>
+				<add position="before"><![CDATA[
+					//microdatapro 8.1 start - 2 - extra
+					if(!isset($microdatapro_main_flag)){
+						$data['tc_og'] = $this->document->getTc_og();
+						$data['tc_og_prefix'] = $this->document->getTc_og_prefix();
+					}
+					//microdatapro 8.1 end - 2 - extra
+					]]></add>
+			</operation>
+		</file>
+		<file path="catalog/view/theme/*/template/common/{header,header1,header2,header3}.tpl">
+			<operation error="skip">
+				<search><![CDATA[</head>]]></search>
+				<add position="before"><![CDATA[<?php echo $tc_og; //microdatapro 8.1 ?>]]></add>
+			</operation>
+			<operation error="skip">
+				<search><![CDATA[<html]]></search>
+				<add position="replace"><![CDATA[<html <?php echo $tc_og_prefix; //microdatapro 8.1 ?>]]></add>
+			</operation>
+		</file>
+		<file path="catalog/view/theme/*/template/common/{header,header1,header2,header3}.twig">
+			<operation error="skip">
+				<search><![CDATA[</head>]]></search>
+				<add position="before"><![CDATA[{{ tc_og }} {# microdatapro 8.1 #}]]></add>
+			</operation>
+			<operation error="skip">
+				<search><![CDATA[<html]]></search>
+				<add position="replace"><![CDATA[<html {{ tc_og_prefix }} {# microdatapro 8.1 #}]]></add>
+			</operation>
+		</file>
+	<!--/open graph & twitter cards-->
+
+	<!--home-->
+		<file path="catalog/controller/common/home.php">
+			<operation>
+				<search><![CDATA[$data['column_left'] = $this->load->controller]]></search>
+				<add position="before"><![CDATA[
+					//microdatapro 8.1 start
+						if(isset($data)){
+							$data_mdp = $data;
+						}
+						$mdp_path = 'module/microdatapro';
+						if(substr(VERSION, 0, 3) >= 2.3){
+							$mdp_path = 'extension/module/microdatapro';
+						}
+						$data_mdp['microdatapro_data']['meta_description'] = $this->config->get('config_meta_description');
+						$data_mdp['description'] = $this->config->get('config_meta_description');
+						$data_mdp['heading_title'] = $this->config->get('config_meta_title');
+						$data_mdp['breadcrumbs'] = array(array("href" => $this->url->link('common/home')));
+						$data_mdp['microdatapro_data']['image'] = is_file(DIR_IMAGE . $this->config->get('config_logo'))?$this->config->get('config_logo'):'';
+						$this->document->setTc_og($this->load->controller($mdp_path . '/tc_og', $data_mdp));
+						$this->document->setTc_og_prefix($this->load->controller($mdp_path . '/tc_og_prefix'));
+					//microdatapro 8.1 end
+				]]></add>
+			</operation>
+		</file>
+	<!--/home-->
+
+	<!--company-->
+		<file path="catalog/controller/common/footer.php">
+			<operation error="skip">
+				<search><![CDATA[$data['contact'] = $this->url->link(]]></search>
+				<add position="before"><![CDATA[
+					//microdatapro 8.1 start - 1 - main
+						$mdp_path = 'module/microdatapro';
+						if(substr(VERSION, 0, 3) >= 2.3){
+							$mdp_path = 'extension/module/microdatapro';
+						}
+						$data['microdatapro'] = $this->load->controller($mdp_path . '/company');
+						$microdatapro_main_flag = 1;
+					//microdatapro 8.1 end - 1 - main
+					]]></add>
+			</operation>
+			<operation>
+				<search><![CDATA[$data['powered']]]></search>
+				<add position="before"><![CDATA[
+					//microdatapro 8.1 start - 2 - extra
+						if(!isset($microdatapro_main_flag)){
+							$mdp_path = 'module/microdatapro';
+							if(substr(VERSION, 0, 3) >= 2.3){
+								$mdp_path = 'extension/module/microdatapro';
+							}
+							$data['microdatapro'] = $this->load->controller($mdp_path . '/company');
+						}
+					//microdatapro 8.1 end - 2 - extra
+					]]></add>
+			</operation>
+		</file>
+		<file path="catalog/view/theme/*/template/common/{footer,footer2}.tpl">
+			<operation error="skip">
+				<search><![CDATA[</footer>]]></search>
+				<add position="before"><![CDATA[<?php echo $microdatapro; $microdatapro_main_flag = 1; //microdatapro 8.1 - 1 - main ?>]]></add>
+			</operation>
+			<operation error="skip">
+				<search><![CDATA[</body>]]></search>
+				<add position="before"><![CDATA[<?php if(!isset($microdatapro_main_flag)){echo $microdatapro;  $microdatapro_main_flag = 1;} //microdatapro 8.1 - 2 - extra ?>]]></add>
+			</operation>
+			<operation error="skip">
+				<search><![CDATA[</html>]]></search>
+				<add position="before"><![CDATA[<?php if(!isset($microdatapro_main_flag)){echo $microdatapro;} //microdatapro 8.1 - 3 - extra ?>]]></add>
+			</operation>
+		</file>
+		<file path="catalog/view/theme/*/template/common/{footer,footer2}.twig">
+			<operation error="skip">
+				<search><![CDATA[</footer>]]></search>
+				<add position="before"><![CDATA[{{ microdatapro }} {% set microdatapro_main_flag = 1 %} {# microdatapro 8.1 - 1 - main #}]]></add>
+			</operation>
+			<operation error="skip">
+				<search><![CDATA[</body>]]></search>
+				<add position="before"><![CDATA[{% if (microdatapro_main_flag is not defined) %}{{ microdatapro }} {% set microdatapro_main_flag = 1 %}{% endif %} {# microdatapro 8.1 - 2 - extra #}]]></add>
+			</operation>
+			<operation error="skip">
+				<search><![CDATA[</html>]]></search>
+				<add position="before"><![CDATA[{% if (microdatapro_main_flag is not defined) %}{{ microdatapro }}{% endif %} {# microdatapro 8.1 - 3 - extra #}]]></add>
+			</operation>
+		</file>
+	<!--/company-->
+
+	<!--product-->
+		<file path="catalog/controller/product/product.php">
+			<operation error="skip">
+				<search><![CDATA[if ($product_info) {]]></search>
+					<add position="after"><![CDATA[
+						//microdatapro 8.1 start
+							$data['microdatapro_data'] = $product_info;
+						//microdatapro 8.1 end
+					]]></add>
+			</operation>
+			<operation error="skip">
+				<search><![CDATA[$this->model_catalog_product->updateViewed]]></search>
+					<add position="before"><![CDATA[
+						//microdatapro 8.1 start - 1 - main
+							if(!isset($data['microdatapro_data'])){
+								$data['microdatapro_data'] = $product_info;
+							}
+							$mdp_path = 'module/microdatapro';
+							if(substr(VERSION, 0, 3) >= 2.3){
+								$mdp_path = 'extension/module/microdatapro';
+							}
+							$this->document->setTc_og($this->load->controller($mdp_path . '/tc_og', $data));
+							$this->document->setTc_og_prefix($this->load->controller($mdp_path . '/tc_og_prefix'));
+							$data['microdatapro'] = $this->load->controller($mdp_path . '/product', $data);
+							$microdatapro_main_flag = 1;
+						//microdatapro 8.1 end - 1 - main
+					]]></add>
+			</operation>
+			<operation>
+				<search><![CDATA[$data['column_left']]]></search>
+					<add position="before"><![CDATA[
+						//microdatapro 8.1 start - 2 - extra
+							if(!isset($microdatapro_main_flag) or isset($this->request->get['filter_ocfilter'])){
+								if(isset($product_info) && $product_info){
+									if(!isset($data['microdatapro_data'])){
+										$data['microdatapro_data'] = $product_info;
+									}
+									$mdp_path = 'module/microdatapro';
+									if(substr(VERSION, 0, 3) >= 2.3){
+										$mdp_path = 'extension/module/microdatapro';
+									}
+									$this->document->setTc_og($this->load->controller($mdp_path . '/tc_og', $data));
+									$this->document->setTc_og_prefix($this->load->controller($mdp_path . '/tc_og_prefix'));
+									$data['microdatapro'] = $this->load->controller($mdp_path . '/product', $data);
+									$microdatapro_main_flag = 1;
+								}
+							}
+						//microdatapro 8.1 end - 2 - extra
+					]]></add>
+			</operation>
+		</file>
+		<file path="catalog/view/theme/*/template/product/product.tpl">
+			<operation error="skip">
+				<search><![CDATA[<?php echo $content_bottom]]></search>
+				<add position="before"><![CDATA[<?php echo $microdatapro; $microdatapro_main_flag = 1; //microdatapro 8.1 - 1 - main ?>]]></add>
+			</operation>
+			<operation error="skip">
+				<search><![CDATA[<?php echo $footer]]></search>
+				<add position="before"><![CDATA[<?php if(!isset($microdatapro_main_flag)){echo $microdatapro;} //microdatapro 8.1 - 2 - extra ?>]]></add>
+			</operation>
+		</file>
+		<file path="catalog/view/theme/*/template/product/product.twig">
+			<operation error="skip">
+				<search><![CDATA[{{ content_bottom]]></search>
+				<add position="before"><![CDATA[{{ microdatapro }} {% set microdatapro_main_flag = 1 %} {# microdatapro 8.1 - 1 - main #}]]></add>
+			</operation>
+			<operation error="skip">
+				<search><![CDATA[{{ footer]]></search>
+				<add position="before"><![CDATA[{% if (microdatapro_main_flag is not defined) %}{{ microdatapro }}{% endif %} {# microdatapro 8.1 - 2 - extra #}]]></add>
+			</operation>
+			<operation error="skip">
+				<search><![CDATA[{{content_bottom]]></search>
+				<add position="before"><![CDATA[{{ microdatapro }} {% set microdatapro_main_flag = 1 %} {# microdatapro 8.1 - 1 - main #}]]></add>
+			</operation>
+			<operation error="skip">
+				<search><![CDATA[{{footer]]></search>
+				<add position="before"><![CDATA[{% if (microdatapro_main_flag is not defined) %}{{ microdatapro }}{% endif %} {# microdatapro 8.1 - 2 - extra #}]]></add>
+			</operation>
+		</file>
+	<!--/product-->
+
+	<!--category-->
+		<file path="catalog/controller/product/category.php">
+			<operation>
+				<search><![CDATA[$data['header'] = $this->load->controller('common/header');]]></search>
+				<add position="before"><![CDATA[
+					//microdatapro 8.1 start - 2 - extra
+						if(isset($category_info) && $category_info){
+							$mdp_path = 'module/microdatapro';
+							if(substr(VERSION, 0, 3) >= 2.3){
+								$mdp_path = 'extension/module/microdatapro';
+							}
+							$data['microdatapro_data'] = $category_info;
+							$data_mdp = $data;
+							$data_mdp['results'] = $results;
+							if($this->config->get('fv_hl_image')){
+								$data_mdp['microdatapro_data']['image'] = $this->config->get('fv_hl_image');
+							}
+							$this->document->setTc_og($this->load->controller($mdp_path . '/tc_og', $data_mdp));
+							$this->document->setTc_og_prefix($this->load->controller($mdp_path . '/tc_og_prefix'));
+							$data['microdatapro'] = $this->load->controller($mdp_path . '/category', $data_mdp);
+						}
+					//microdatapro 8.1 end - 2 - extra
+				]]></add>
+			</operation>
+		</file>
+		<file path="catalog/view/theme/*/template/product/category.tpl">
+			<operation error="skip">
+				<search><![CDATA[<?php echo $content_bottom]]></search>
+				<add position="before"><![CDATA[<?php echo $microdatapro; $microdatapro_main_flag = 1; //microdatapro 8.1 - 1 - main ?>]]></add>
+			</operation>
+			<operation error="skip">
+				<search><![CDATA[<?php echo $footer]]></search>
+				<add position="before"><![CDATA[<?php if(!isset($microdatapro_main_flag)){echo $microdatapro;} //microdatapro 8.1 - 2 - extra ?>]]></add>
+			</operation>
+		</file>
+		<file path="catalog/view/theme/*/template/product/category.twig">
+			<operation error="skip">
+				<search><![CDATA[{{ content_bottom]]></search>
+				<add position="before"><![CDATA[{{ microdatapro }} {% set microdatapro_main_flag = 1 %} {# microdatapro 8.1 - 1 - main #}]]></add>
+			</operation>
+			<operation>
+				<search><![CDATA[{{ footer]]></search>
+				<add position="before"><![CDATA[{% if (microdatapro_main_flag is not defined) %}{{ microdatapro }}{% endif %} {# microdatapro 8.1 - 2 - extra #}]]></add>
+			</operation>
+			<operation error="skip">
+				<search><![CDATA[{{content_bottom]]></search>
+				<add position="before"><![CDATA[{{ microdatapro }} {% set microdatapro_main_flag = 1 %} {# microdatapro 8.1 - 1 - main #}]]></add>
+			</operation>
+			<operation error="skip">
+				<search><![CDATA[{{footer]]></search>
+				<add position="before"><![CDATA[{% if (microdatapro_main_flag is not defined) %}{{ microdatapro }}{% endif %} {# microdatapro 8.1 - 2 - extra #}]]></add>
+			</operation>
+		</file>
+	<!--/category-->
+
+	<!--manufacturer-->
+		<file path="catalog/controller/product/manufacturer.php">
+			<operation error="skip">
+				<search><![CDATA[$pagination = new]]></search>
+				<add position="before"><![CDATA[
+					//microdatapro 8.1 start - 1 - main
+						$data['microdatapro_data'] = $manufacturer_info;
+						$mdp_path = 'module/microdatapro';
+						if(substr(VERSION, 0, 3) >= 2.3){
+							$mdp_path = 'extension/module/microdatapro';
+						}
+						$this->document->setTc_og($this->load->controller($mdp_path . '/tc_og', $data));
+						$this->document->setTc_og_prefix($this->load->controller($mdp_path . '/tc_og_prefix'));
+						$data['microdatapro'] = $this->load->controller($mdp_path . '/manufacturer', $data);
+						$microdatapro_main_flag = 1;
+					//microdatapro 8.1 end - 1 - main
+				]]></add>
+			</operation>
+			<operation error="skip">
+				<search><![CDATA[$data['column_left']]]></search>
+				<add position="before"><![CDATA[
+					//microdatapro 8.1 start - 2 - extra
+					if(!isset($microdatapro_main_flag)){
+						if(isset($manufacturer_info) && $manufacturer_info){
+							$mdp_path = 'module/microdatapro';
+							if(substr(VERSION, 0, 3) >= 2.3){
+								$mdp_path = 'extension/module/microdatapro';
+							}
+							$data['microdatapro_data'] = $manufacturer_info;
+							$this->document->setTc_og($this->load->controller($mdp_path . '/tc_og', $data));
+							$this->document->setTc_og_prefix($this->load->controller($mdp_path . '/tc_og_prefix'));
+							$data['microdatapro'] = $this->load->controller($mdp_path . '/manufacturer', $data);
+						}
+					}
+					//microdatapro 8.1 end - 2 - extra
+				]]></add>
+			</operation>
+		</file>
+		<file path="catalog/view/theme/*/template/product/manufacturer_info.tpl">
+			<operation error="skip">
+				<search><![CDATA[<?php echo $content_bottom]]></search>
+				<add position="before"><![CDATA[<?php echo $microdatapro; $microdatapro_main_flag = 1; //microdatapro 8.1 - 1 - main ?>]]></add>
+			</operation>
+			<operation error="skip">
+				<search><![CDATA[<?php echo $footer]]></search>
+				<add position="before"><![CDATA[<?php if(!isset($microdatapro_main_flag)){echo $microdatapro;} //microdatapro 8.1 - 2 - extra ?>]]></add>
+			</operation>
+		</file>
+		<file path="catalog/view/theme/*/template/product/manufacturer_info.twig">
+			<operation error="skip">
+				<search><![CDATA[{{ content_bottom]]></search>
+				<add position="before"><![CDATA[{{ microdatapro }} {% set microdatapro_main_flag = 1 %} {# microdatapro 8.1 - 1 - main #}]]></add>
+			</operation>
+			<operation>
+				<search><![CDATA[{{ footer]]></search>
+				<add position="before"><![CDATA[{% if (microdatapro_main_flag is not defined) %}{{ microdatapro }}{% endif %} {# microdatapro 8.1 - 2 - extra #}]]></add>
+			</operation>
+			<operation error="skip">
+				<search><![CDATA[{{content_bottom]]></search>
+				<add position="before"><![CDATA[{{ microdatapro }} {% set microdatapro_main_flag = 1 %} {# microdatapro 8.1 - 1 - main #}]]></add>
+			</operation>
+			<operation>
+				<search><![CDATA[{{footer]]></search>
+				<add position="before"><![CDATA[{% if (microdatapro_main_flag is not defined) %}{{ microdatapro }}{% endif %} {# microdatapro 8.1 - 2 - extra #}]]></add>
+			</operation>
+		</file>
+	<!--/manufacturer-->
+
+	<!--information-->
+		<file path="catalog/controller/information/information.php">
+			<operation error="skip">
+				<search><![CDATA[$data['column_left']]]></search>
+				<add position="before"><![CDATA[
+					//microdatapro 8.1 start - 1 - main
+						$data_mdp = $data;
+						$data_mdp['microdatapro_data'] = $information_info;
+						$data_mdp['description'] = html_entity_decode($information_info['description'], ENT_QUOTES, 'UTF-8');
+						$mdp_path = 'module/microdatapro';
+						if(substr(VERSION, 0, 3) >= 2.3){
+							$mdp_path = 'extension/module/microdatapro';
+						}
+						$this->document->setTc_og($this->load->controller($mdp_path . '/tc_og', $data_mdp));
+						$this->document->setTc_og_prefix($this->load->controller($mdp_path . '/tc_og_prefix'));
+						$data['microdatapro'] = $this->load->controller($mdp_path . '/information', $data_mdp);
+						$microdatapro_main_flag = 1;
+					//microdatapro 8.1 start - 1 - main
+				]]></add>
+			</operation>
+		</file>
+		<file path="catalog/view/theme/*/template/information/information.tpl">
+			<operation error="skip">
+				<search><![CDATA[<?php echo $content_bottom]]></search>
+				<add position="before"><![CDATA[<?php echo $microdatapro; $microdatapro_main_flag = 1; //microdatapro 8.1 - 1 - main ?>]]></add>
+			</operation>
+			<operation error="skip">
+				<search><![CDATA[<?php echo $footer]]></search>
+				<add position="before"><![CDATA[<?php if(!isset($microdatapro_main_flag)){echo $microdatapro;} //microdatapro 8.1 - 2 - extra ?>]]></add>
+			</operation>
+		</file>
+		<file path="catalog/view/theme/*/template/information/information.twig">
+			<operation error="skip">
+				<search><![CDATA[{{ content_bottom]]></search>
+				<add position="before"><![CDATA[{{ microdatapro }} {% set microdatapro_main_flag = 1 %} {# microdatapro 8.1 - 1 - main #}]]></add>
+			</operation>
+			<operation error="skip">
+				<search><![CDATA[{{ footer]]></search>
+				<add position="before"><![CDATA[{% if (microdatapro_main_flag is not defined) %}{{ microdatapro }}{% endif %} {# microdatapro 8.1 - 2 - extra #}]]></add>
+			</operation>
+			<operation error="skip">
+				<search><![CDATA[{{content_bottom]]></search>
+				<add position="before"><![CDATA[{{ microdatapro }} {% set microdatapro_main_flag = 1 %} {# microdatapro 8.1 - 1 - main #}]]></add>
+			</operation>
+			<operation error="skip">
+				<search><![CDATA[{{footer]]></search>
+				<add position="before"><![CDATA[{% if (microdatapro_main_flag is not defined) %}{{ microdatapro }}{% endif %} {# microdatapro 8.1 - 2 - extra #}]]></add>
+			</operation>
+		</file>
+	<!--/information-->
+
+</modification>

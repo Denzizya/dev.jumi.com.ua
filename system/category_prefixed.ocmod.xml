@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+	<code>opfaq_category_prefixes</code>
+	<name>Opencartfaq - Category Prefixes</name>
+	<version>1.0.0</version>
+	<author>Opencartfaq</author>
+	<link>https://opencartfaq.com/</link>
+	<file path="admin/controller/common/column_left.php">
+    	<operation error="skip">
+			<search><![CDATA[if ($this->user->hasPermission('access', 'catalog/product')) {]]></search>
+			<add position="before"><![CDATA[
+			if ($this->user->hasPermission('access', 'catalog/category_prefixes')) {
+				$catalog[] = array(
+					'name'	   => $this->language->get('text_category_prefixes'),
+					'href'     => $this->url->link('catalog/category_prefixes', 'user_token=' . $this->session->data['user_token'], true),
+					'children' => array()
+				);
+			}
+			]]></add>
+    	</operation>
+	</file>
+
+    <file path="admin/language/uk-ua/common/column_left.php">
+    	<operation error="skip">
+			<search><![CDATA[$_['text_other_status']]]></search>
+			<add position="before"><![CDATA[
+			$_['text_category_prefixes'] = 'Префікси до категорій';
+			]]></add>
+    	</operation>
+	</file>
+</modification>

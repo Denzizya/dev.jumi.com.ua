@@ -1,0 +1,158 @@
+{{ header }}{{ column_left }}
+<div id="content">
+    <div class="page-header">
+        <div class="container-fluid">
+            <div class="pull-right form-inline">
+                <button type="submit" form="form-module" name="save" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save">&nbsp{{ button_save }}</i></button>
+                <button type="submit" form="form-module" name="apply" data-toggle="tooltip" title="{{ button_apply }}" class="btn btn-default">{{ button_count }}</button>
+                <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a>
+            </div>
+            <h1>{{ heading_title }}</h1>
+            <ul class="breadcrumb">
+                {% for breadcrumb in breadcrumbs %}
+                    <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="container-fluid">
+        {% if error_warning %}
+            <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+            </div>
+        {% endif %}
+        {% if success %}
+            <div class="alert alert-success alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ success }}
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+            </div>
+        {% endif %}
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title"><i class="fa fa-pencil"></i> {{ text_edit }}</h3>
+                <span class="pull-right">{{ text_info }}</span>
+            </div>
+            <div class="panel-body">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#tab-main" data-toggle="tab">{{ tab_main }}</a></li>
+                    <li><a href="#tab-log" data-toggle="tab">{{ tab_log }}</a></li>
+                    <li><a href="#price-product-1c" data-toggle="tab">{{ price_product_1c }}</a></li>
+                </ul>
+                <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-module" class="form-horizontal">
+                    <div class="tab-content">
+                        <div class="tab-pane active form-horizontal" id="tab-main">
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label" for="input-status">{{ entry_name }}</label>
+                                <div class="col-sm-2">
+                                    <input type="text" name="module_pricecontrol_name" value="{{ module_pricecontrol_name }}" placeholder="{{ entry_name }}" id="input-name" class="form-control"/>
+                                </div>
+                                <label class="col-sm-1 control-label" for="input-status">{{ entry_priority }}</label>
+                                <div class="col-sm-2">
+                                    <input type="text" name="module_pricecontrol_priority" value="{{ module_pricecontrol_priority }}" placeholder="{{ entry_priority }}" id="input-priority" class="form-control"/>
+                                </div>
+                                <label class="col-sm-1 control-label" for="input-sort_order">{{ entry_sort_order }}</label>
+                                <div class="col-sm-2">
+                                    <input type="text" name="module_pricecontrol_sort_order" value="{{ module_pricecontrol_sort_order }}" placeholder="{{ entry_sort_order }}" id="input-sort_order" class="form-control"/>
+                                </div>
+                                <div class="col-sm-2">
+                                    <select name="module_pricecontrol_status" id="input-status" class="form-control">
+                                        <option value="0" {{ "0" == module_pricecontrol_status ? "selected" : "" }}>{{ text_disabled }}</option>
+                                        <option value="1" {{ "1" == module_pricecontrol_status ? "selected" : "" }}>{{ text_enabled }}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">{{ entry_category }}</label>
+                                <div class="col-sm-5">
+                                    <div class="well well-sm" style="min-height:150px;max-height:300px;overflow: auto;">
+                                        <table class="table table-striped">
+                                            <tbody>
+                                            {% for category in module_category_data %}
+                                                <tr>
+                                                    <td class="checkbox">
+                                                        <label>
+                                                        <input type="checkbox" name="module_pricecontrol_data[category][{{ category.category_id }}]" value="{{ category.category_id }}">{{ category.name }}
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="input-related">{{ entry_product }}</label>
+                                <div class="col-sm-10">
+                                <input type="text" name="related" value="" placeholder="{{ entry_product }}" id="input-related" class="form-control"/>
+                                <div id="product-related" class="well well-sm" style="height: 150px; overflow: auto;"> {% for product_related in product_relateds %}
+                                    <div id="product-related{{ product_related.product_id }}"><i class="fa fa-minus-circle"></i> {{ product_related.name }}
+                                        <input type="hidden" name="product_related[]" value="{{ product_related.product_id }}"/>
+                                    </div>
+                                    {% endfor %}</div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">{{ entry_product }}</label>
+                                <div class="col-sm-5">
+                                    <div class="well well-sm" style="min-height:150px;max-height:300px;overflow: auto;">
+                                        <table class="table table-striped">
+                                            <tbody>
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="input-priority"><span class="help" title="{{ help_priority }}" data-toggle="tooltip">{{ entry_priority }}</span></label>
+                                <div class="col-sm-12">
+                                    <input type="text" name="module_pricecontrol_priority" value="{{ module_pricecontrol_sort_order }}" placeholder="{{ entry_priority }}" id="input-priority" class="form-control"/>
+                                </div>
+                                <div class="col-sm-12">
+                                    <div class="well well-sm" style="min-height:150px;max-height:300px;overflow: auto;">
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane form-horizontal" id="tab-log">
+                        </div>
+                        <div class="tab-pane form-horizontal" id="price-product-1c">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript"><!--
+    // Related
+    $('input[name=\'related\']').autocomplete({
+        'source': function(request, response) {
+            $.ajax({
+                url: 'index.php?route=catalog/product/autocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request),
+                dataType: 'json',
+                success: function(json) {
+                    response($.map(json, function(item) {
+                        return {
+                            label: item['name'],
+                            value: item['product_id']
+                        }
+                    }));
+                }
+            });
+        },
+        'select': function(item) {
+            $('input[name=\'related\']').val('');
+
+            $('#product-related' + item['value']).remove();
+
+            $('#product-related').append('<div id="product-related' + item['value'] + '"><i class="fa fa-minus-circle"></i> ' + item['label'] + '<input type="hidden" name="product_related[]" value="' + item['value'] + '" /></div>');
+        }
+    });
+
+    $('#product-related').delegate('.fa-minus-circle', 'click', function() {
+        $(this).parent().remove();
+    });
+    <!--</script>
+{{ footer }}
+</div>
